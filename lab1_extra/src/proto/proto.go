@@ -1,0 +1,46 @@
+package proto
+
+import (
+	"encoding/json"
+
+	"golang.org/x/net/html"
+)
+
+// Request -- запрос клиента к серверу.
+type Request struct {
+	// Поле Command может принимать три значения:
+	// * "quit" - прощание с сервером (после этого сервер рвёт соединение);
+	// * "calculate" - передача новой задачи на сервер;
+	Command string `json:"command"`
+
+	Data *json.RawMessage `json:"data"`
+}
+
+// Response -- ответ сервера клиенту.
+type Response struct {
+	// Поле Status может принимать три значения:
+	// * "ok" - успешное выполнение команды "quit";
+	// * "failed" - в процессе выполнения команды произошла ошибка;
+	// * "result" - максимальная высота вычислена.
+	Status string `json:"status"`
+
+	// Если Status == "failed", то в поле Data находится сообщение об ошибке.
+	// Если Status == "result", в поле Data должна лежать высота
+	// В противном случае, поле Data пустое.
+	Data *json.RawMessage `json:"data"`
+}
+
+// htmlPage - чистый код html страницы
+type HtmlPage struct {
+	Code string `json:"htmlCode"`
+}
+
+// Html элемент, но только с нужными для передачи полями
+type NodeForTransfer struct {
+	Parent     string           `json:"parent"`
+	FirstChild string           `json:"fisrtChild"`
+	LastChild  string           `json:"lastChild"`
+	Data       string           `json:"data"`
+	Namespace  string           `json:"namespace"`
+	Attr       []html.Attribute `json:"attr"`
+}
